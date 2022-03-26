@@ -1,12 +1,3 @@
-#
-
-
-# given that someone transfers a particular list of
-# assets X, Y, Z
-# one or more
-
-# transfer back the corresponding amount
-
 num_assets = Tmpl.Int("TMPL_NUM_ASSETS")
 
 owner = Tmpl.Addr("TMPL_OWNER")
@@ -18,6 +9,7 @@ def get_asset(n):
   return 0
 
 def check_amount(transferred, previous):
+
   new_amount = previous
   if previous == 0:
     new_amount = transferred
