@@ -1,6 +1,9 @@
+from lib import txn
+
 num_assets = Tmpl.Int("TMPL_NUM_ASSETS")
 
 owner = Tmpl.Addr("TMPL_OWNER")
+
 
 def get_asset(n):
   if n == 0: return Tmpl.Int("TMPL_ASSET1")
@@ -9,7 +12,6 @@ def get_asset(n):
   return 0
 
 def check_amount(transferred, previous):
-
   new_amount = previous
   if previous == 0:
     new_amount = transferred
@@ -31,11 +33,13 @@ def check_transfers():
   Assert(found == num_assets)
   return found
 
+def complete_swap(n):
+  txn.transfer(Tmpl.Int('TMPL_REDEEM_ASSET'), n)
 
 def app():
   n = 0
   if Txn.application_args.length() == 1:
     n = check_transfers()
-    #complete_swap(n)
+    complete_swap(n)
   return 1
 
