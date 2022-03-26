@@ -1,0 +1,133 @@
+#pragma version 6
+int 0
+store 0
+txn NumAppArgs
+int 1
+==
+bz main_l2
+callsub checktransfers_2
+store 0
+load 0
+callsub completeswap_3
+main_l2:
+int 1
+return
+
+// get_asset
+getasset_0:
+store 4
+load 4
+int 0
+==
+bnz getasset_0_l5
+load 4
+int 1
+==
+bnz getasset_0_l4
+load 4
+int 2
+==
+bz getasset_0_l6
+int TMPL_ASSET3
+retsub
+getasset_0_l4:
+int TMPL_ASSET2
+retsub
+getasset_0_l5:
+int TMPL_ASSET1
+retsub
+getasset_0_l6:
+int 0
+retsub
+
+// check_amount
+checkamount_1:
+store 6
+store 5
+load 6
+store 7
+load 6
+int 0
+==
+bz checkamount_1_l2
+load 5
+store 7
+checkamount_1_l2:
+load 5
+int 0
+>
+assert
+load 7
+load 5
+==
+assert
+load 7
+retsub
+
+// check_transfers
+checktransfers_2:
+int 0
+store 3
+int 0
+store 2
+int 0
+store 1
+checktransfers_2_l1:
+load 3
+global GroupSize
+<
+load 2
+int TMPL_NUM_ASSETS
+<
+&&
+bz checktransfers_2_l5
+load 3
+gtxns XferAsset
+load 3
+callsub getasset_0
+==
+load 3
+gtxns AssetReceiver
+global CurrentApplicationAddress
+==
+&&
+bnz checktransfers_2_l4
+checktransfers_2_l3:
+load 3
+int 1
++
+store 3
+b checktransfers_2_l1
+checktransfers_2_l4:
+load 3
+gtxns AssetAmount
+load 1
+callsub checkamount_1
+store 1
+load 2
+int 1
++
+store 2
+b checktransfers_2_l3
+checktransfers_2_l5:
+load 2
+int TMPL_NUM_ASSETS
+==
+assert
+load 2
+retsub
+
+// complete_swap
+completeswap_3:
+store 8
+itxn_next
+int axfer
+itxn_field TypeEnum
+int TMPL_REDEEM_ASSET
+itxn_field XferAsset
+txn Sender
+itxn_field AssetReceiver
+load 8
+itxn_field AssetAmount
+itxn_submit
+retsub

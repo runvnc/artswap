@@ -1,8 +1,8 @@
-import {getAlgod} from './acces.mjs'
+import {getAlgod} from './access.mjs'
 
 import fs from 'fs/promises'
 
-export async function makeSwapApp({addr, assets, redeemAsset, compile: true }) {
+export async function makeSwapApp({addr, assets, redeemAsset, compile }) {
   let teal = await fs.readFile('swap.teal')
   let inserts = { TMPL_NUM_ASSETS: assets.length,
                   TMPL_REDEEM_ASSET: redeemAsset}
