@@ -1,5 +1,8 @@
 {
   "dependencies": {
-    "algosdk": "^1.15.0"
+    "algosdk": "^1.15.0",
+    "compression": "^1.7.4",
+    "express": "^4.17.3",
+    "serve-index": "^1.9.1"
   }
 }

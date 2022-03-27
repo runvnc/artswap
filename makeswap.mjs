@@ -1,4 +1,7 @@
 import {getAlgod} from './access.mjs'
+import algosdk from 'algosdk'
+
+const print = console.log
 
 import fs from 'fs/promises'
 
@@ -21,14 +24,18 @@ export async function makeSwapApp({addr, assets, redeemAsset, params, compile })
   console.log(teal)
   if (compile) {
     let algod = getAlgod(net)
-
-    const prog = await algod.compile(teal).do()
-    let clearTeal  = await fs.readFile('clear.teal', 'utf8')
-    const clear = await algod.compile(clearTeal).do()
-    console.log(prog, clear)
-    let appArgs = null
-    let createTxn = await algod.makeApplicationCreateTxn(addr, params, OnApplicationComplete.NoOpOC, prog, clear, 1,1, 1, 1, appArgs)
+    let prog = await algod.compile(teal).do()
     
+    prog = Buffer.from(prog.result,'base64')
+    let clearTeal  = await fs.readFile('clear.teal', 'utf8')
+    let clear = await algod.compile(clearTeal).do()
+    clear = Buffer.from(clear.result, 'base64')
+    clear = new Uint8Array(clear)
+    prog = new Uint8Array(prog)
+    let appArgs = null
+
+    let createTxn = await algosdk.makeApplicationCreateTxn(
+      addr, params, algosdk.OnApplicationComplete.NoOpOC, prog, clear, 1,1, 1, 1,[])
     return createTxn
   }
 }

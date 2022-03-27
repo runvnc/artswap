@@ -25,8 +25,8 @@ export function getAlgod(which) {
     token = ''
   } else if (which == 'DEV') {
     net = 'http://localhost'
-    token = ''
-    port = 9392
+    token = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+    port = 4001
   }
   let algod = new algosdk.Algodv2(token, net,port)
   return algod

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Algorand Swap Creator</title>
+
+<style>
+
+@font-face {
+  font-family: 'NotoSans';
+  src: url('NotoSans-Regular.ttf')
+}
+
+@font-face {
+  font-family: 'Manrope';
+  src: url('Manrope-Regular.ttf');
+}
+
+#font-face {
+  font-family: 'Inconsolata';
+  src: url('Inconsolata.ttf');
+}
+
+html,body,div,span,td,th,dd,li,dt,details,summary,section {
+  font-family: Arial, sans-serif;
+  background:
+}
+
+html, body, input, div, button, .collapsible, textarea, h1, h2 {
+  margin: 10px;
+  padding: 10px;
+  font-family: "Manrope", sans-serif;
+  color: #c1c3aa;
+  background: #5f2c82;  /* fallback for old browsers */ 
+  background: -webkit-linear-gradient(45deg, #2c5f5e, #5f2c82);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(45deg, #2c5f5e, #5f2c82); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */  
+  scrollbar-color: #2c5f5e, #5f2c82;
+  line-height: 1.5em;
+}
+
+p, div, li, dd, dt, td, input, button {
+  text-shadow: 0.05em 0 #312d3b,0 0.05em #312d3b,-0.05em 0 #312d3b,0 -0.05em #312d3b,-0.05em -0.05em #312d3b,-0.05em 0.05em #312d3b,0.05em 0.05em #312d3b,0.05em -0.05em #312d3b;
+}
+
+section {
+  margin: 30px;  
+}
+
+::-webkit-scrollbar {
+  background: #5f2c82;
+  width: 15px;
+}
+
+::-webkit-scrollbar-track  {
+  background: #5f2c82;
+}
+
+input, button {
+  font-size: 1em;
+}
+
+dl, dt, dd {
+  word-break: keep-all;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2c5f5e;
+  -webkit-box-shadow: inset 0 0 2px rgba(200, 200, 200, 0.6);
+}
+ 
+input, button {
+  background: -webkit-linear-gradient(45deg, #2c5f5e, #5f2c82);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(45deg, #2c5f5e, #5f2c82);  
+}
+
+code {
+  margin-top: 15px;
+  border: inset 1px #ccc;
+  margin-bottom: 15px;
+  padding: 5px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;  
+  display: block;
+  height: 50%;
+}
+
+html, body {
+  margin: 0px;
+  padding: 0px;
+}
+
+pre, code {
+ overflow-x: auto;
+ white-space: pre-wrap;       /* css-3 */
+ white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+ white-space: -pre-wrap;      /* Opera 4-6 */
+ white-space: -o-pre-wrap;    /* Opera 7 */
+ word-wrap: break-word; 
+}
+ 
+h2 {
+  padding-top: 0px;
+  margin-top: 0px;
+  display: inline-block;
+  width: 40%;  
+}
+
+th {
+  text-align: center;
+}
+
+p, .box {
+  margin: 10px;
+  padding: 5px;
+}
+
+/* #49a09d */
+
+.box {
+  background: rgba(40,40,40,0.5);
+  border-radius: 10px;
+  margin: 12px;
+  padding: 12px;
+}
+
+td, tr, input {
+  padding: 2px;
+  margin: 2px;
+}
+
+td, tr {
+  margin: 0px;
+}
+
+input {
+  padding-left: 5px;  
+}
+
+
+</style>
+</head>
+
+<body>
+
+<section>
+<h1>Algorand Swap Creator</h2>
+
+<form>
+
+<p><button>Connect wallet</button></p>
+
+<p>
+<label>Asset to be Redeemed
+<input>
+</label></p>
+
+<p><label>Asset ID 1:
+<input></label></p>
+
+<p><label>Asset ID 2 (optional):
+<input></label></p>
+
+<p><label>Asset ID 3 (optional):
+<input></label></p>
+
+
+
+<p><button>Make Swap App</button>
+</p>
+
+<div id="showinfo" style="display:none;">
+
+<p>Transfer redeemable asset to the following address:
+<span id="appaddress"></span>
+</p>
+
+
+<p>Copy the following code into your web page: <br>
+<textarea id="embed" cols="80" rows="7">
+</textarea></p>
+
+</div>
+
+</form>
+
+<script src="dist.mjs"></script>
+</section>
+
+</body>
+</html>
