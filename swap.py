@@ -4,7 +4,6 @@ num_assets = Tmpl.Int("TMPL_NUM_ASSETS")
 
 owner = Tmpl.Addr("TMPL_OWNER")
 
-
 def get_asset(n):
   if n == 0: return Tmpl.Int("TMPL_ASSET1")
   if n == 1: return Tmpl.Int("TMPL_ASSET2")
@@ -41,5 +40,8 @@ def app():
   if Txn.application_args.length() == 1:
     n = check_transfers()
     complete_swap(n)
-  return 1
+    return 1
+  if Txn.sender != owner:
+    Reject()
+  return 0
 

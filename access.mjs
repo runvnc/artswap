@@ -19,13 +19,15 @@ export const getIndexer = (net) => {
 export function getAlgod(which) {
   let net = 'https://node.algonfts.art'
   let token = '8854a3be0df4c5495a9e8f62ff7b0b74dc3fe197351bff3d66c4996201a912d0'
+  let port = ''
   if (which == 'TESTNET') {
     net = 'https://node.testnet.algoexplorerapi.io'
     token = ''
   } else if (which == 'DEV') {
-    net = 'https://localhost'
+    net = 'http://localhost'
     token = ''
+    port = 9392
   }
-  let algod = new algosdk.Algodv2(token, net,'')
+  let algod = new algosdk.Algodv2(token, net,port)
   return algod
 }
