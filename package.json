@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@randlabs/myalgo-connect": "^1.1.2",
     "algosdk": "^1.15.0",
     "compression": "^1.7.4",
     "express": "^4.17.3",

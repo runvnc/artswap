@@ -150,14 +150,17 @@ input {
 
 <form>
 
-<p><button>Connect wallet</button></p>
+<p><button onclick="connect()">Connect wallet</button></p>
+<p id="addr"></p>
 
 <p>
 <label>Asset to be Redeemed
 <input>
 </label></p>
 
-<p><label>Asset ID 1:
+<p>
+Assets to Trade in:<br><br>
+<label>Asset ID 1:
 <input></label></p>
 
 <p><label>Asset ID 2 (optional):
@@ -168,7 +171,7 @@ input {
 
 
 
-<p><button>Make Swap App</button>
+<p><button onclick="make()">Make Swap App</button>
 </p>
 
 <div id="showinfo" style="display:none;">
@@ -186,7 +189,7 @@ input {
 
 </form>
 
-<script src="dist.mjs"></script>
+<script src="dist.js"></script>
 </section>
 
 </body>
