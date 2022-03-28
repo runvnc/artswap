@@ -32,12 +32,27 @@ def check_transfers():
   Assert(found == num_assets)
   return found
 
+
+
 def complete_swap(n):
   txn.transfer(Tmpl.Int('TMPL_REDEEM_ASSET'), n)
 
+def optins():
+  txn.optin(Tmpl.Int('TMPL_REDEEM_ASSET'))
+  txn.optin(Tmpl.Int('TMPL_ASSET1'))
+  if num_assets > 1:
+    txn.optin(Tmpl.Int('TMPL_ASSET2'))
+  if num_assets > 2:
+    txn.optin(Tmpl.Int('TMPL_ASSET3'))
+
 def app():
   n = 0
-  if Txn.application_args.length() == 1:
+  if Txn.application_args.length() == 1 and
+     Txn.application_args[0] == 'optin':
+    optins()
+    return 1
+  if Txn.application_args.length() == 1 and
+     Txn.application_args[0] == 'swap':   
     n = check_transfers()
     complete_swap(n)
     return 1
