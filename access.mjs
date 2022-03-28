@@ -7,8 +7,9 @@ export const getIndexer = (net) => {
     const token = {'X-API-key' : 'VGgpKbdrVC3PQz4vCHMIS9UvoPHkLZJI16RWSOi9'}
     return new algosdk.Indexer(token, baseServer, port)
   } else if (net == 'DEV') {
-    
-  
+    let net = 'http://localhost'
+    return new algosdk.Indexer('', net,8980)
+    return indexer  
   } else {
     let net = 'https://algoindexer.testnet.algoexplorerapi.io'
     return new algosdk.Indexer('', net,'')

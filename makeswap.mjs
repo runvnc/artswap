@@ -10,6 +10,7 @@ let net = 'DEV'
 export async function makeSwapApp({addr, assets, redeemAsset, params, compile }) {
   let teal = await fs.readFile('swap.teal', 'utf8')
   let inserts = { TMPL_NUM_ASSETS: assets.length,
+                  TMPL_OWNER: addr,
                   TMPL_REDEEM_ASSET: redeemAsset}
   for (let n = 1; n <= 3; n++) {
     if (n <= assets.length)
@@ -44,12 +45,13 @@ export async function makeSwapApp({addr, assets, redeemAsset, params, compile })
 }
 
 export async function fundCallTransferTxns({addr, appIndex, appAddress, redeemAsset, amount, fund, params}) {
-  let pay = algosdk.makePaymentTxnWithSuggestedParams(addr, appAddress, 1, undefined, undefined, params)
+  let pay = await algosdk.makePaymentTxnWithSuggestedParams(addr, appAddress, fund, undefined, undefined, params)
   let callOptIn = new Buffer("optin")
-  callOptIn = new Uint8Array(callOptin)
-  let call = algosdk.makeApplicationCallTxnFromObject({appArgs: [callOptIn], appIndex, onComplete: algosdk.OnApplicationComplete.NoOpOC, suggestedParams: params })
-  let xferasset = algosdk.makeAssetTransferTxnWithSuggestedParams(
+  callOptIn = new Uint8Array(callOptIn)
+  let call = await algosdk.makeApplicationCallTxnFromObject({from: addr, appArgs: [callOptIn], appIndex, onComplete: algosdk.OnApplicationComplete.NoOpOC, suggestedParams: params })
+  let xferasset = await algosdk.makeAssetTransferTxnWithSuggestedParams(
     addr, appAddress, undefined, undefined, amount, undefined, redeemAsset, params)
+  
   return [pay, call, xferasset]
 }
 

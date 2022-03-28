@@ -2,14 +2,37 @@
 int 0
 store 0
 txn NumAppArgs
-int 1
+int 0
 ==
-bz main_l2
+bnz main_l5
+byte "arg found is: "
+txna ApplicationArgs 0
+concat
+log
+txna ApplicationArgs 0
+byte "opt_in"
+==
+bnz main_l4
+txna ApplicationArgs 0
+byte "swap"
+==
+bz main_l6
 callsub checktransfers_2
 store 0
 load 0
 callsub completeswap_3
-main_l2:
+int 1
+return
+main_l4:
+callsub optins_4
+int 1
+return
+main_l5:
+callsub checkOwner_5
+return
+main_l6:
+byte "Did not match method."
+log
 int 1
 return
 
@@ -130,4 +153,81 @@ itxn_field AssetReceiver
 load 8
 itxn_field AssetAmount
 itxn_submit
+retsub
+
+// opt_ins
+optins_4:
+itxn_next
+int axfer
+itxn_field TypeEnum
+int TMPL_REDEEM_ASSET
+itxn_field XferAsset
+txn Sender
+itxn_field AssetReceiver
+txn Sender
+itxn_field Sender
+int 0
+itxn_field AssetAmount
+itxn_submit
+itxn_next
+int axfer
+itxn_field TypeEnum
+int TMPL_ASSET1
+itxn_field XferAsset
+txn Sender
+itxn_field AssetReceiver
+txn Sender
+itxn_field Sender
+int 0
+itxn_field AssetAmount
+itxn_submit
+int TMPL_NUM_ASSETS
+int 1
+>
+bnz optins_4_l3
+optins_4_l1:
+int TMPL_NUM_ASSETS
+int 2
+>
+bz optins_4_l4
+itxn_next
+int axfer
+itxn_field TypeEnum
+int TMPL_ASSET3
+itxn_field XferAsset
+txn Sender
+itxn_field AssetReceiver
+txn Sender
+itxn_field Sender
+int 0
+itxn_field AssetAmount
+itxn_submit
+b optins_4_l4
+optins_4_l3:
+itxn_next
+int axfer
+itxn_field TypeEnum
+int TMPL_ASSET2
+itxn_field XferAsset
+txn Sender
+itxn_field AssetReceiver
+txn Sender
+itxn_field Sender
+int 0
+itxn_field AssetAmount
+itxn_submit
+b optins_4_l1
+optins_4_l4:
+retsub
+
+// checkOwner
+checkOwner_5:
+txn Sender
+addr TMPL_OWNER
+!=
+bnz checkOwner_5_l2
+int 1
+retsub
+checkOwner_5_l2:
+int 0
 retsub

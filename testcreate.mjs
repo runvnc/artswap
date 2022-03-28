@@ -1,4 +1,4 @@
-import {makeSwapApp} from './makeswap.mjs'
+import {makeSwapApp, fundCallTransferTxns} from './makeswap.mjs'
 import {getAlgod} from './access.mjs'
 import algosdk from 'algosdk'
 
@@ -41,20 +41,28 @@ const testFundXfer = async () => {
   let assets = [2]
   let redeemAsset = 1
   let amount = 1
-  let fund = 1
-  let appAddress = '2B3I4PZIAH7N6PEQANWHZRALX35SRWNHULIVYEB335VW7X3PKW4CTBYFPY'
-  let txns = fundCallTransferTxns({addr, appAddress, redeemAsset, amount, fund, params}) {
+  let fund = 1000000
+  let appIndex = 9
+  let appAddress = 'BAXQDLV55Y24TA35PSFOOQU6KCZT7AP3SMKW54GTDSN3DUQAFW7BYKKVRQ'
+  console.log({addr, appAddress})
+  let txns = await fundCallTransferTxns({addr, appIndex, appAddress, redeemAsset, amount, fund, params})
   
-  print(txns)
+  print(JSON.stringify(txns,null,4))
   let signed = []
   for (let txn of txns) signed.push(txn.signTxn(acct.sk))
   console.log(signed)
-  for (let s of signed) {
-    let res = await algod.sendRawTransaction(s).do()
-    console.log(res)
-  }
-  
+  print("Sending fund..")
+  let res = await algod.sendRawTransaction(signed[0]).do()  
+  print(res)
+  print("Sending call..")
+  res = await algod.sendRawTransaction(signed[1]).do()  
+  print(res)
+  print("Sending transfer..")
+  res = await algod.sendRawTransaction(signed[2]).do()  
+  print(res)
 }
+
+//testMakeApp().catch(console.error)
 
 testFundXfer().catch(console.error)
 
