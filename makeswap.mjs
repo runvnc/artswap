@@ -34,9 +34,22 @@ export async function makeSwapApp({addr, assets, redeemAsset, params, compile })
     prog = new Uint8Array(prog)
     let appArgs = null
 
-    let createTxn = await algosdk.makeApplicationCreateTxn(
+    // optin to both assets
+
+    let createTxn = algosdk.makeApplicationCreateTxn(
       addr, params, algosdk.OnApplicationComplete.NoOpOC, prog, clear, 1,1, 1, 1,[])
+    
     return createTxn
   }
+}
+
+export async function fundCallTransferTxns({addr, appIndex, appAddress, redeemAsset, amount, fund, params}) {
+  let pay = algosdk.makePaymentTxnWithSuggestedParams(addr, appAddress, 1, undefined, undefined, params)
+  let callOptIn = new Buffer("optin")
+  callOptIn = new Uint8Array(callOptin)
+  let call = algosdk.makeApplicationCallTxnFromObject({appArgs: [callOptIn], appIndex, onComplete: algosdk.OnApplicationComplete.NoOpOC, suggestedParams: params })
+  let xferasset = algosdk.makeAssetTransferTxnWithSuggestedParams(
+    addr, appAddress, undefined, undefined, amount, undefined, redeemAsset, params)
+  return [pay, call, xferasset]
 }
 
