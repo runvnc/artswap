@@ -44,11 +44,13 @@ export async function makeSwapApp({addr, assets, redeemAsset, params, compile })
   }
 }
 
-export async function fundCallTransferTxns({addr, appIndex, appAddress, redeemAsset, amount, fund, params}) {
+export async function fundCallTransferTxns({addr, appIndex, appAddress, redeemAsset, assets, amount, fund, params}) {
   let pay = await algosdk.makePaymentTxnWithSuggestedParams(addr, appAddress, fund, undefined, undefined, params)
-  let callOptIn = new Buffer("optin")
+  let callOptIn = new Buffer("opt_in")
   callOptIn = new Uint8Array(callOptIn)
-  let call = await algosdk.makeApplicationCallTxnFromObject({from: addr, appArgs: [callOptIn], appIndex, onComplete: algosdk.OnApplicationComplete.NoOpOC, suggestedParams: params })
+  let foreignAssets = [redeemAsset]
+  for (let a of assets) foreignAssets.push(a)
+  let call = await algosdk.makeApplicationCallTxnFromObject({from: addr, foreignAssets, appArgs: [callOptIn], appIndex, onComplete: algosdk.OnApplicationComplete.NoOpOC, suggestedParams: params })
   let xferasset = await algosdk.makeAssetTransferTxnWithSuggestedParams(
     addr, appAddress, undefined, undefined, amount, undefined, redeemAsset, params)
   

@@ -1,7 +1,7 @@
 
 @inline
 def transfer(assetid, amount, to=Txn.sender):
-  Next()
+  Begin()
   SetField(TxnField.type_enum, TxnType.AssetTransfer)
   SetField(TxnField.xfer_asset, assetid)
   SetField(TxnField.asset_receiver, to)
@@ -9,8 +9,8 @@ def transfer(assetid, amount, to=Txn.sender):
   Submit()
 
 @inline
-def opt_in(assetid, to=Txn.sender):
-  Next()
+def opt_in(assetid, to=app_address):
+  Begin()
   SetField(TxnField.type_enum, TxnType.AssetTransfer)
   SetField(TxnField.xfer_asset, assetid)
   SetField(TxnField.asset_receiver, to)

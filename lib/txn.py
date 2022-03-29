@@ -5,15 +5,15 @@ globals().update(TealType.__members__)
 
 def transfer(assetid, amount, to=Txn.sender()):
     return  Seq(
-    	InnerTxnBuilder.Next(),
+    	InnerTxnBuilder.Begin(),
     	InnerTxnBuilder.SetField(TxnField.type_enum, TxnType.AssetTransfer),
     	InnerTxnBuilder.SetField(TxnField.xfer_asset, assetid),
     	InnerTxnBuilder.SetField(TxnField.asset_receiver, to),
     	InnerTxnBuilder.SetField(TxnField.asset_amount, amount),
     	InnerTxnBuilder.Submit() )
-def opt_in(assetid, to=Txn.sender()):
+def opt_in(assetid, to=Global.current_application_address()):
     return  Seq(
-    	InnerTxnBuilder.Next(),
+    	InnerTxnBuilder.Begin(),
     	InnerTxnBuilder.SetField(TxnField.type_enum, TxnType.AssetTransfer),
     	InnerTxnBuilder.SetField(TxnField.xfer_asset, assetid),
     	InnerTxnBuilder.SetField(TxnField.asset_receiver, to),

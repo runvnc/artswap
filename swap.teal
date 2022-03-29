@@ -24,11 +24,12 @@ callsub completeswap_3
 int 1
 return
 main_l4:
+callsub checkassets_5
 callsub optins_4
 int 1
 return
 main_l5:
-callsub checkOwner_5
+callsub checkOwner_6
 return
 main_l6:
 byte "Did not match method."
@@ -143,7 +144,7 @@ retsub
 // complete_swap
 completeswap_3:
 store 8
-itxn_next
+itxn_begin
 int axfer
 itxn_field TypeEnum
 int TMPL_REDEEM_ASSET
@@ -157,26 +158,26 @@ retsub
 
 // opt_ins
 optins_4:
-itxn_next
+itxn_begin
 int axfer
 itxn_field TypeEnum
-int TMPL_REDEEM_ASSET
+txna Assets 0
 itxn_field XferAsset
-txn Sender
+global CurrentApplicationAddress
 itxn_field AssetReceiver
-txn Sender
+global CurrentApplicationAddress
 itxn_field Sender
 int 0
 itxn_field AssetAmount
 itxn_submit
-itxn_next
+itxn_begin
 int axfer
 itxn_field TypeEnum
-int TMPL_ASSET1
+txna Assets 1
 itxn_field XferAsset
-txn Sender
+global CurrentApplicationAddress
 itxn_field AssetReceiver
-txn Sender
+global CurrentApplicationAddress
 itxn_field Sender
 int 0
 itxn_field AssetAmount
@@ -190,28 +191,28 @@ int TMPL_NUM_ASSETS
 int 2
 >
 bz optins_4_l4
-itxn_next
+itxn_begin
 int axfer
 itxn_field TypeEnum
-int TMPL_ASSET3
+txna Assets 3
 itxn_field XferAsset
-txn Sender
+global CurrentApplicationAddress
 itxn_field AssetReceiver
-txn Sender
+global CurrentApplicationAddress
 itxn_field Sender
 int 0
 itxn_field AssetAmount
 itxn_submit
 b optins_4_l4
 optins_4_l3:
-itxn_next
+itxn_begin
 int axfer
 itxn_field TypeEnum
-int TMPL_ASSET2
+txna Assets 2
 itxn_field XferAsset
-txn Sender
+global CurrentApplicationAddress
 itxn_field AssetReceiver
-txn Sender
+global CurrentApplicationAddress
 itxn_field Sender
 int 0
 itxn_field AssetAmount
@@ -220,14 +221,47 @@ b optins_4_l1
 optins_4_l4:
 retsub
 
+// check_assets
+checkassets_5:
+txna Assets 0
+int TMPL_REDEEM_ASSET
+==
+assert
+txna Assets 1
+int TMPL_ASSET1
+==
+assert
+int TMPL_NUM_ASSETS
+int 1
+>
+bnz checkassets_5_l3
+checkassets_5_l1:
+int TMPL_NUM_ASSETS
+int 2
+>
+bz checkassets_5_l4
+txna Assets 3
+int TMPL_ASSET3
+==
+assert
+b checkassets_5_l4
+checkassets_5_l3:
+txna Assets 2
+int TMPL_ASSET2
+==
+assert
+b checkassets_5_l1
+checkassets_5_l4:
+retsub
+
 // checkOwner
-checkOwner_5:
+checkOwner_6:
 txn Sender
 addr TMPL_OWNER
 !=
-bnz checkOwner_5_l2
+bnz checkOwner_6_l2
 int 1
 retsub
-checkOwner_5_l2:
+checkOwner_6_l2:
 int 0
 retsub
