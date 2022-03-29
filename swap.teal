@@ -17,6 +17,8 @@ txna ApplicationArgs 0
 byte "swap"
 ==
 bz main_l6
+int 1
+callsub checkassets_5
 callsub checktransfers_2
 store 0
 load 0
@@ -24,6 +26,7 @@ callsub completeswap_3
 int 1
 return
 main_l4:
+int 0
 callsub checkassets_5
 callsub optins_4
 int 1
@@ -34,7 +37,7 @@ return
 main_l6:
 byte "Did not match method."
 log
-int 1
+int 0
 return
 
 // get_asset
@@ -147,7 +150,7 @@ store 8
 itxn_begin
 int axfer
 itxn_field TypeEnum
-int TMPL_REDEEM_ASSET
+txna Assets 0
 itxn_field XferAsset
 txn Sender
 itxn_field AssetReceiver
@@ -223,10 +226,15 @@ retsub
 
 // check_assets
 checkassets_5:
+store 9
 txna Assets 0
 int TMPL_REDEEM_ASSET
 ==
 assert
+load 9
+int 0
+==
+bz checkassets_5_l5
 txna Assets 1
 int TMPL_ASSET1
 ==
@@ -234,24 +242,24 @@ assert
 int TMPL_NUM_ASSETS
 int 1
 >
-bnz checkassets_5_l3
-checkassets_5_l1:
+bnz checkassets_5_l4
+checkassets_5_l2:
 int TMPL_NUM_ASSETS
 int 2
 >
-bz checkassets_5_l4
+bz checkassets_5_l5
 txna Assets 3
 int TMPL_ASSET3
 ==
 assert
-b checkassets_5_l4
-checkassets_5_l3:
+b checkassets_5_l5
+checkassets_5_l4:
 txna Assets 2
 int TMPL_ASSET2
 ==
 assert
-b checkassets_5_l1
-checkassets_5_l4:
+b checkassets_5_l2
+checkassets_5_l5:
 retsub
 
 // checkOwner

@@ -33,7 +33,7 @@ def check_transfers():
   return found
 
 def complete_swap(n):
-  txn.transfer(Tmpl.Int('TMPL_REDEEM_ASSET'), n)
+  txn.transfer(Txn.assets[0], n)
 
 def opt_ins():
   txn.opt_in(Txn.assets[0])
@@ -43,13 +43,15 @@ def opt_ins():
   if num_assets > 2:
     txn.opt_in(Txn.assets[3])
 
-def check_assets():
+def check_assets(swap):
   Assert( Txn.assets[0] == Tmpl.Int('TMPL_REDEEM_ASSET') )
-  Assert( Txn.assets[1] == Tmpl.Int('TMPL_ASSET1') )
-  if num_assets > 1:
-    Assert( Txn.assets[2] == Tmpl.Int('TMPL_ASSET2') ) 
-  if num_assets > 2:
-    Assert( Txn.assets[3] == Tmpl.Int('TMPL_ASSET3') )
+  if swap == 0:
+    Assert( Txn.assets[1] == Tmpl.Int('TMPL_ASSET1') )
+    if num_assets > 1:
+      Assert( Txn.assets[2] == Tmpl.Int('TMPL_ASSET2') ) 
+    if num_assets > 2:
+      Assert( Txn.assets[3] == Tmpl.Int('TMPL_ASSET3') )
+
 
 def checkOwner():
   if Txn.sender != owner:
@@ -65,14 +67,15 @@ def app():
   print("arg found is: " + Txn.application_args[0])
       
   if Txn.application_args[0] == 'opt_in':
-    check_assets()
+    check_assets(0)
     opt_ins()
     return 1
 
   if Txn.application_args[0] == 'swap':   
+    check_assets(1)
     n = check_transfers()
     complete_swap(n)
     return 1
 
   print("Did not match method.")
-  return 1
+  return 0

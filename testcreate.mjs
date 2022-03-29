@@ -19,8 +19,8 @@ const testMakeApp = async () => {
   
   //let addr = 'KNEQRACEJA4MO4J6HXJWNZE3PZZW7ICZAQPJ7TC4QCG6Z5F3ZJIGJX6KZE'
   let addr = acct.addr
-  let assets = [50]
-  let redeemAsset = 42
+  let assets = [51]
+  let redeemAsset = 41
   let txn = await makeSwapApp({addr, assets, params, redeemAsset, compile: true})
   
   print(txn)
@@ -38,12 +38,12 @@ const testFundXfer = async () => {
   let params = await algod.getTransactionParams().do()
   
   let addr = acct.addr
-  let assets = [50]
-  let redeemAsset = 42
+  let assets = [51]
+  let redeemAsset = 41
   let amount = 1
   let fund = 1000000
-  let appIndex = 54
-  let appAddress = '3Z2RSO2F5NJ3GWC4TN6ZQVMJ6EGH6ZZCHLF4PAEK2FNE4ZXKO4TTLEY3UQ'
+  let appIndex = 60
+  let appAddress = 'MDT3YKSTRNM4ICLPIV7PD7YBRWME46I5FJG7YX7VB275LP5KHCMBSOBJHY'
   console.log({addr, appAddress})
   let txns = await fundCallTransferTxns({addr, appIndex, appAddress, redeemAsset,
                                          assets, amount, fund, params})

@@ -1,6 +1,6 @@
 import algosdk from 'algosdk'
 
-export async function createSwapTxns({params, customer, appAddress, appIndex, assets, amount}) {
+export async function createSwapTxns({params, customer, appAddress, appIndex, redeemAsset, assets, amount}) {
   let txns = []
   console.log({customer, appAddress, assets})
   for (let asset of assets) {
@@ -10,10 +10,18 @@ export async function createSwapTxns({params, customer, appAddress, appIndex, as
       )
     )
   }
-  txns.push(algosdk.makeApplicationNoOpTxn(
-    customer, params, appIndex, [ new Uint8Array([0]) ]
-  ))
+  let optin = await algosdk.makeAssetTransferTxnWithSuggestedParams(
+    customer, customer, undefined, undefined, 0, undefined, redeemAsset, params)
 
+  txns.push(optin)
+  let callXfer = new Buffer("swap")
+  callXfer = new Uint8Array(callXfer)
+  txns.push(
+    await algosdk.makeApplicationCallTxnFromObject({
+     from: customer, foreignAssets: [redeemAsset], appArgs: [callXfer], appIndex,
+     onComplete: algosdk.OnApplicationComplete.NoOpOC, suggestedParams: params
+    })
+  )
   let txgroup = algosdk.assignGroupID(txns)
   return txns    
 }
