@@ -23,8 +23,20 @@ const connect = () => connect_().catch(error)
 const fetch2 = async url => await (await fetch(url))
 
 const make = async () => {
-  let data = await fetch2(`/make`)
+  let redeem = qe('#redeem').value
+  let asset1 = qe('#asset1').value
+  let asset2 = qe('#asset2').value
+  let asset3 = qe('#asset3').value
+  let addr = qe('#addr').innerHTML
+  
+  let assets = [asset1*1]
+  if (asset2) assets.push(asset2 * 1)
+  if (asset3) assets.push(asset3 * 1)
+  assets = assets.join(',')
+  let data = await fetch2(`/make?addr=${addr}&redeemAsset=${redeem}&assets=${assets}`)
   console.log(data)
+  const signedTxn = await myAlgoWallet.signTransaction(txn.toByte())
+  const response = await algod.sendRawTransaction(signedTxn.blob).do()  
 }
 
 

@@ -17,7 +17,6 @@ const testMakeApp = async () => {
 
   let params = await algod.getTransactionParams().do()
   
-  //let addr = 'KNEQRACEJA4MO4J6HXJWNZE3PZZW7ICZAQPJ7TC4QCG6Z5F3ZJIGJX6KZE'
   let addr = acct.addr
   let assets = [51]
   let redeemAsset = 41
