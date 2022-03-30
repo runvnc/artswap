@@ -95,6 +95,7 @@ const loadInputs = () => {
   if (!obj) return
   let {redeem,asset1,asset2,asset3,addr} = obj
   qe('#redeem').value = obj.redeem
+  let redeemAsset = redeem
   if (addr) qe('#addr').innerHTML = addr
   if (asset1) qe('#asset1').value = asset1
   if (asset2) qe('#asset2').value = asset2
@@ -106,10 +107,8 @@ const loadInputs = () => {
     qe('#appaddress').innerHTML = window.appAddress
     qe('#showinfo').style.display = 'block'
 
-    qe('#embed').value = `
-     <iframe class="embedswap" src="https://swap.algonfts.art/swap.html?label=Swap!&appAddress=${appAddress}&appIndex=${appIndex}&redeemAsset=${redeemAsset}&asset1=${asset1}&asset2=${asset2}&asset3=${asset3}">
-     </iframe>
-    `
+    qe('#embed').value = `<iframe class="embedswap" src="https://swap.algonfts.art/swap.html?label=Swap!&appAddress=${appAddress}&appIndex=${appIndex}&redeemAsset=${redeemAsset}&asset1=${asset1}&asset2=${asset2}&asset3=${asset3}">
+     </iframe>`
   }
 }
 
