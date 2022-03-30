@@ -154,7 +154,7 @@ const fundAndTransfer = async () => {
   if (asset2) assets.push(asset2 * 1)
   if (asset3) assets.push(asset3 * 1)
 
-  let fund = 100000
+  let fund = 1000000
   let amount = qe('#amount').value * 1
   if (amount < 1 || isNaN(amount)) {
   	status('Specify amount of redeemable to transfer.')
@@ -171,14 +171,15 @@ const fundAndTransfer = async () => {
   console.log(signed)
   status("Sending fund..")
   let res = await algod.sendRawTransaction(signed[0]).do()  
-  status(res)
+  console.log(res)
+  status(res.txId)
   status("Sending call..")
   res = await algod.sendRawTransaction(signed[1]).do()  
-  status(res)
+  status(res.txId)
   for (let i = 2; i < signed.length; i++) {
     print("Sending transfer..")  
     res = await algod.sendRawTransaction(signed[i]).do()  
-    status(res)
+    status(res.txId)
   }
 }
 
