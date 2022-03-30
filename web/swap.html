@@ -6,37 +6,56 @@
 <style>
 html, body {
   background-color: transparent;
-  font-family: Arial, sans-serif;
+  font-family: Verdana, sans-serif;
+  margin: 10px;
+  font-size: 14pt;
 }
 
 button {
+ font-size: 1em;
  border: none;
  background: black;
  color: #ccc;
  cursor: pointer;
- padding: 3px;	
+ padding: 3px;
+ margin: 5px;
+ padding-left: 5px;
+ padding-right: 5px;
+ display: inline-block;
 }
 
 input {
+  font-size: 1em;
+
   background: #eee;
   color: #000;
+  display: inline-block;
 }
 
 #addr {
   background-color: #ccc;
+  color: #111;
 }
 
+html {
+	width: 100%;
+}
+body {
+	width: 100%;
+}
 </style>
 </head>
 <body>
 
-<div id="addr"></div>
+<span id="addr"></span>
+<br>
 <button id="btnconn" onclick="connect().catch(console.error)">Wallet</button>
-<button id="btngo" style="display:none;" onclick="go().catch(console.error)">Swap</button>
-
 
 <input type="number" placeholder="Amount" id="amount" min="1" max="1000">
 
+<button id="btngo" style="display:none;" onclick="go().catch(console.error)">Swap</button>
+
+<div id="txid"></div>
 <script src="swapdist.js"></script>
 
 </body>
