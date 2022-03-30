@@ -1,7 +1,7 @@
 import MyAlgoConnect from '@randlabs/myalgo-connect'
 import {getAlgod, getIndexer} from './access.mjs'
 import algosdk from 'algosdk'
-import {makeSwapApp} from './makeswap.mjs'
+import {makeSwapApp, fundCallTransferTxns} from './makeswap.mjs'
 import delay from 'delay'
 
 let algod = getAlgod('MAINNET')
@@ -49,7 +49,7 @@ const make = async () => {
   let assets = [asset1*1]
   if (asset2) assets.push(asset2 * 1)
   if (asset3) assets.push(asset3 * 1)
-  assets = assets.join(',')
+
   console.log({addr,redeemAsset,assets})
   let params = await algod.getTransactionParams().do()
   let txn = await makeSwapApp({addr, assets, params, redeemAsset, compile: true})
@@ -61,8 +61,14 @@ const make = async () => {
   console.log(response)
   let info = await waitForTxnInfo(response.txId)
   localStorage.setItem('swap_appid', info.appid)
-  const appInfo = await indexer.lookupApplications(response.appid).do()
-  console.log({appInfo})
+  status('Application index: '+ info.appid)
+  window.appId = info.appid
+  window.appIndex = info.appid
+  window.appAddress = algosdk.getApplicationAddress(info.appid)
+  qe('#appaddress').innerHTML = window.appAddress
+  localStorage.setItem('swap_app_address', window.appAddress)
+  localStorage.setItem('swap_app_index', window.appIndex)
+  qe('#showinfo').style.display = 'block'
   return false
 }
 
@@ -87,6 +93,12 @@ const loadInputs = () => {
   if (asset1) qe('#asset1').value = asset1
   if (asset2) qe('#asset2').value = asset2
   if (asset3) qe('#asset3').value = asset3
+  window.appAddress = localStorage.getItem('swap_app_address')
+  window.appIndex = localStorage.getItem('swap_add_index')
+  if (window.appAddress) {
+    qe('#appaddress').innerHTML = window.appAddress
+    qe('#showinfo').style.display = 'block'
+  }
 }
 
 const txninfo = async (txid) => {	
@@ -111,13 +123,52 @@ const txninfo = async (txid) => {
 const waitForTxnInfo = async (txid) => {
   let info
   let tries = 0
+  status('Waiting for transaction confirmation..')
   while (!info && tries < 50) {
-    await delay(1000)
+    await delay(500)
+    status('..')
+    await delay(500)
+    status('Waiting for transaction confirmation..')
     info = await txninfo(txid)    
     tries += 1
   }
   return info
 }
+
+const fundAndTransfer = async () => {
+  let redeemAsset = qe('#redeem').value
+  let asset1 = qe('#asset1').value
+  let asset2 = qe('#asset2').value
+  let asset3 = qe('#asset3').value
+  let addr = qe('#addr').innerHTML
+  
+  let assets = [asset1*1]
+  if (asset2) assets.push(asset2 * 1)
+  if (asset3) assets.push(asset3 * 1)
+
+  let fund = 100000
+  let amount = qe('#amount').value
+  
+  let txns = await fundCallTransferTxns({addr, appIndex, appAddress, redeemAsset,
+                                         assets, amount, fund, params})
+  
+  print(JSON.stringify(txns,null,4))
+  let signed = []
+  for (let txn of txns) signed.push(txn.signTxn(acct.sk))
+  console.log(signed)
+  status("Sending fund..")
+  let res = await algod.sendRawTransaction(signed[0]).do()  
+  status(res)
+  status("Sending call..")
+  res = await algod.sendRawTransaction(signed[1]).do()  
+  status(res)
+  for (let i = 2; i < signed.length; i++) {
+    print("Sending transfer..")  
+    res = await algod.sendRawTransaction(signed[i]).do()  
+    status(res)
+  }
+}
+
 
 const closeApp = async (appIndex) => {
   const params = await algod.getTransactionParams().do()
@@ -132,6 +183,10 @@ const closeApp = async (appIndex) => {
 
   const myAlgoConnect = new MyAlgoConnect()
   const signedTxn = await myAlgoConnect.signTransaction(txn)  	
+  const response = await algod.sendRawTransaction(signedTxn.blob).do()  
+  console.log(response)
+  status(JSON.stringify(response))
+  
 }
 
 const delApp = async (appIndex) => {
@@ -147,6 +202,9 @@ const delApp = async (appIndex) => {
 
   const myAlgoConnect = new MyAlgoConnect()
   const signedTxn = await myAlgoConnect.signTransaction(txn)  	
+  const response = await algod.sendRawTransaction(signedTxn.blob).do()  
+  console.log(response)
+  status(JSON.stringify(response))
 }
 
 const status = (s) => {
@@ -165,7 +223,7 @@ const closeDel = async (appIndex) => {
 
 Object.assign(window, {qa, qe, myAlgoWallet, make, fetchjson, fetchtext,
                        connect, connect_, showAddress, loadInputs, saveInputs,
-                       closeApp, delApp})
+                       closeApp, delApp, fundAndTransfer})
 
 showAddress(address)
 

@@ -145,6 +145,10 @@ input {
   border: 1px solid #fff;
 }
 
+.danger {
+	border: 1px solid orange;
+}
+
 </style>
 </head>
 
@@ -180,15 +184,24 @@ Assets to Trade in:<br><br>
 <div id="status">
 </div>
 
-<button onclick="closeApp(appId)"></button>
+<!--
+<button onclick="closeApp(appId)">Closeout App</button> -->
 
-<button onclick="delApp(appId)"></button>
+<div class="danger" style="display:none;">
+<button onclick="delApp(appId)">Delete App (Danger)</button>
+</div>
 
 <div id="showinfo" style="display:none;">
 
-<p>Transfer redeemable asset to the following address:
+
+<p>App address:
 <span id="appaddress"></span>
 </p>
+
+Amount of redeemable asset to transfer:
+<input type="number" id="amount">
+<br>
+<button onclick="fundAndTransfer()">Fund and Transfer Redeemable</button>
 
 <p>Copy the following code into your web page: <br>
 <textarea id="embed" cols="80" rows="7">
