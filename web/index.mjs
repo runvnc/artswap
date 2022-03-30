@@ -1,10 +1,11 @@
 import MyAlgoConnect from '@randlabs/myalgo-connect'
-import {getAlgod} from './access.mjs'
+import {getAlgod, getIndexer} from './access.mjs'
 import algosdk from 'algosdk'
 import {makeSwapApp} from './makeswap.mjs'
 import delay from 'delay'
 
 let algod = getAlgod('MAINNET')
+let indexer = getIndexer('MAINNET')
 
 const myAlgoWallet = new MyAlgoConnect()
 
@@ -57,6 +58,9 @@ const make = async () => {
   const response = await algod.sendRawTransaction(signedTxn.blob).do()  
   console.log(response)
   let info = await waitForTxnInfo(response.txId)
+  localStorage.setItem('swap_appid', info.appid)
+  const appInfo = await indexer.lookupApplications(response.appid).do()
+  console.log({appInfo})
   return false
 }
 
@@ -83,39 +87,80 @@ const loadInputs = () => {
   if (asset3) qe('#asset3').value = asset3
 }
 
-const waitForTxnInfo = async (txid) => {
-  let txninfo
-  let tries = 0
-  while (!txninfo && tries < 50) {
-    await delay(1000)
-    txninfo = await txninfo(txid)    
-    tries += 1
-  }
-  return txninfo
-}
-
 const txninfo = async (txid) => {	
   let response = await indexer.searchForTransactions().txid(txid).do()
   if (!response) return
   print(response)
-
+  if (response.transactions.length == 0) return
+  
   for (let txn of response.transactions) {
     print(txn)
-    printLogs(txn)
+    if (txn['created-application-index']) response.appid = txn['created-application-index']
     if (txn['inner-txns']) {
     	for (let t of txn['inner-txns']) {
     		print(t)
-    		printLogs(t)
+    		
     	}
     }
   }
   return response
 }
- 
+
+const waitForTxnInfo = async (txid) => {
+  let info
+  let tries = 0
+  while (!info && tries < 50) {
+    await delay(1000)
+    info = await txninfo(txid)    
+    tries += 1
+  }
+  return info
+}
+
+const closeApp = async (appIndex) => {
+  const params = await algod.getTransactionParams().do()
+
+  const txn : any = {
+    ...params,
+    type: "appl",
+    appOnComplete: 2,
+    from: address,
+    appIndex,
+    note: note,
+  }
+
+  const myAlgoConnect = new MyAlgoConnect()
+  const signedTxn = await myAlgoConnect.signTransaction(txn)  	
+}
+
+const delApp = async (appIndex) => {
+  const params = await algod.getTransactionParams().do()
+
+  const txn : any = {
+    ...params,
+    type: "appl",
+    appOnComplete: 5,
+    from: address,
+    appIndex
+  }
+
+  const myAlgoConnect = new MyAlgoConnect()
+  const signedTxn = await myAlgoConnect.signTransaction(txn)  	
+}
+
+const closeDel = async (appIndex) {
+  await closeApp(appIndex)
+  print('closed ok')
+  localStorage.setItem('swap_app_status', 'closed')
+  await delApp(appIndex)
+  print('del ok')
+  localStorage.setItem('swap_app_status', 'deleted')
+}
 
 
 Object.assign(window, {qa, qe, myAlgoWallet, make, fetchjson, fetchtext,
-                       connect, connect_, showAddress, loadInputs, saveInputs})
+                       connect, connect_, showAddress, loadInputs, saveInputs,
+                       closeApp, delApp})
 
 showAddress(address)
 
