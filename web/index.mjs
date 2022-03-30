@@ -57,7 +57,13 @@ const make = async () => {
   console.log(txn)
 
   const signedTxn = await myAlgoWallet.signTransaction(txn.toByte())
-  const response = await algod.sendRawTransaction(signedTxn.blob).do()  
+  let response
+  try {
+    response = await algod.sendRawTransaction(signedTxn.blob).do()  
+  } catch (e) {
+  	status(e.message)
+  	return
+  }
   console.log(response)
   let info = await waitForTxnInfo(response.txId)
   localStorage.setItem('swap_appid', info.appid)
@@ -94,7 +100,8 @@ const loadInputs = () => {
   if (asset2) qe('#asset2').value = asset2
   if (asset3) qe('#asset3').value = asset3
   window.appAddress = localStorage.getItem('swap_app_address')
-  window.appIndex = localStorage.getItem('swap_add_index')
+  window.appIndex = localStorage.getItem('swap_app_index') * 1
+  status(window.appIndex)
   if (window.appAddress) {
     qe('#appaddress').innerHTML = window.appAddress
     qe('#showinfo').style.display = 'block'
@@ -136,7 +143,8 @@ const waitForTxnInfo = async (txid) => {
 }
 
 const fundAndTransfer = async () => {
-  let redeemAsset = qe('#redeem').value
+  const params = await algod.getTransactionParams().do()
+  let redeemAsset = qe('#redeem').value * 1
   let asset1 = qe('#asset1').value
   let asset2 = qe('#asset2').value
   let asset3 = qe('#asset3').value
@@ -147,14 +155,19 @@ const fundAndTransfer = async () => {
   if (asset3) assets.push(asset3 * 1)
 
   let fund = 100000
-  let amount = qe('#amount').value
-  
+  let amount = qe('#amount').value * 1
+  if (amount < 1 || isNaN(amount)) {
+  	status('Specify amount of redeemable to transfer.')
+  	return
+  }
+  let appIndex = window.appIndex
   let txns = await fundCallTransferTxns({addr, appIndex, appAddress, redeemAsset,
                                          assets, amount, fund, params})
   
   print(JSON.stringify(txns,null,4))
-  let signed = []
-  for (let txn of txns) signed.push(txn.signTxn(acct.sk))
+  let txs = txns.map( t => t.toByte() )
+  let signed = await myAlgoWallet.signTransaction(txs)
+  signed = signed.map (s => s.blob)    
   console.log(signed)
   status("Sending fund..")
   let res = await algod.sendRawTransaction(signed[0]).do()  

@@ -44,6 +44,7 @@ export async function makeSwapApp({addr, assets, redeemAsset, params, compile })
 }
 
 export async function fundCallTransferTxns({addr, appIndex, appAddress, redeemAsset, assets, amount, fund, params}) {
+  console.log({appIndex,addr,appAddress,redeemAsset,assets})
   let pay = await algosdk.makePaymentTxnWithSuggestedParams(addr, appAddress, fund, undefined, undefined, params)
   let callOptIn = new Buffer("opt_in")
   callOptIn = new Uint8Array(callOptIn)
