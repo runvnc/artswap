@@ -154,19 +154,19 @@ input {
 
 <p>
 <label>Asset to be Redeemed
-<input id="redeem">
+<input onchange="saveInputs()" id="redeem">
 </label></p>
 
 <p>
 Assets to Trade in:<br><br>
 <label>Asset ID 1:
-<input id="asset1"></label></p>
+<input onchange="saveInputs()" id="asset1"></label></p>
 
 <p><label>Asset ID 2 (optional):
-<input id="asset2"></label></p>
+<input onchange="saveInputs()" id="asset2"></label></p>
 
 <p><label>Asset ID 3 (optional):
-<input id="asset3"></label></p>
+<input onchange="saveInputs()" id="asset3"></label></p>
 
 
 <p><button onclick="return make()">Make Swap App</button>
