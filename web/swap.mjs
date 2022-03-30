@@ -1,5 +1,5 @@
 import {createSwapTxns} from './dotxns.mjs'
-import {getAlgod} from './access.mjs'
+import {getAlgod, getIndexer} from './access.mjs'
 import algosdk from 'algosdk'
 
 import MyAlgoConnect from '@randlabs/myalgo-connect'
@@ -27,24 +27,27 @@ const loadAccount = () => {
   let addr = localStorage.getItem('swap_customer')
   if (addr) {
   	customer = addr
-    qe('#btn').innerHTML = 'Swap'
+    qe('#btngo').style.display = 'block'
     return customer
   } else {
+  }
+}
+
+loadAccount()
+
+const connect = async () => {
     customer = (await myAlgoWallet.connect()).map(a => a.address)[0]  
     if (customer) {
       showAddress(customer)
       localStorage.setItem('swap_customer', customer)
       return
-    }  	
-  }
+    }  		
 }
-
-loadAccount().then(c => (customer = c))
   
 const go = async () => {  
   let algod = getAlgod('MAIN')
 
-  if (!customer) return (await loadAccount())
+  if (!customer) return (await connect())
 
   const urlParams = new URLSearchParams(window.location.search)
   let appAddress = urlParams.get('appAddress')
@@ -58,7 +61,8 @@ const go = async () => {
   let assets = [asset1 * 1]
   if (asset2) assets.push(asset2*1)
   if (asset3) assets.push(asset3*1)
-  
+
+  let amount = qe('#amount').value  
   let params = await algod.getTransactionParams().do()
   
   let txns = await createSwapTxns({params, redeemAsset, customer, appAddress, appIndex, assets, amount})  

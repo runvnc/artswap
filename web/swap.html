@@ -6,15 +6,36 @@
 <style>
 html, body {
   background-color: transparent;
+  font-family: Arial, sans-serif;
 }
+
+button {
+ border: none;
+ background: black;
+ color: #ccc;
+ cursor: pointer;
+ padding: 3px;	
+}
+
+input {
+  background: #eee;
+  color: #000;
+}
+
+#addr {
+  background-color: #ccc;
+}
+
 </style>
 </head>
 <body>
 
-<button id="btn" onclick="go()">Connect Wallet</button>
 <div id="addr"></div>
+<button id="btnconn" onclick="connect().catch(console.error)">Wallet</button>
+<button id="btngo" style="display:none;" onclick="go().catch(console.error)">Swap</button>
 
-<input type="number" placeholder="Amount" min="1" max="1000">
+
+<input type="number" placeholder="Amount" id="amount" min="1" max="1000">
 
 <script src="swapdist.js"></script>
 
