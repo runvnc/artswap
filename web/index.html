@@ -148,30 +148,28 @@ input {
 <section>
 <h1>Algorand Swap Creator</h2>
 
-<form>
 
 <p><button onclick="connect()">Connect wallet</button></p>
 <p id="addr"></p>
 
 <p>
 <label>Asset to be Redeemed
-<input>
+<input id="redeem">
 </label></p>
 
 <p>
 Assets to Trade in:<br><br>
 <label>Asset ID 1:
-<input></label></p>
+<input id="asset1"></label></p>
 
 <p><label>Asset ID 2 (optional):
-<input></label></p>
+<input id="asset2"></label></p>
 
 <p><label>Asset ID 3 (optional):
-<input></label></p>
+<input id="asset3"></label></p>
 
 
-
-<p><button onclick="make()">Make Swap App</button>
+<p><button onclick="return make()">Make Swap App</button>
 </p>
 
 <div id="showinfo" style="display:none;">
@@ -180,14 +178,12 @@ Assets to Trade in:<br><br>
 <span id="appaddress"></span>
 </p>
 
-
 <p>Copy the following code into your web page: <br>
 <textarea id="embed" cols="80" rows="7">
 </textarea></p>
 
 </div>
 
-</form>
 
 <script src="dist.js"></script>
 </section>

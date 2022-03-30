@@ -5,10 +5,11 @@ const print = console.log
 
 import fs from 'fs/promises'
 
-let net = 'DEV'
+let net = 'MAINNET'
+
 
 export async function makeSwapApp({addr, assets, redeemAsset, params, compile }) {
-  let teal = await fs.readFile('swap.teal', 'utf8')
+  let teal = await fetchbody('swap.teal')
   let inserts = { TMPL_NUM_ASSETS: assets.length,
                   TMPL_OWNER: addr,
                   TMPL_REDEEM_ASSET: redeemAsset}
@@ -28,7 +29,7 @@ export async function makeSwapApp({addr, assets, redeemAsset, params, compile })
     let prog = await algod.compile(teal).do()
     
     prog = Buffer.from(prog.result,'base64')
-    let clearTeal  = await fs.readFile('clear.teal', 'utf8')
+    let clearTeal  = await fetchbody('clear.teal')
     let clear = await algod.compile(clearTeal).do()
     clear = Buffer.from(clear.result, 'base64')
     clear = new Uint8Array(clear)

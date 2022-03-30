@@ -1,5 +1,8 @@
-import MyAlgoConnect from '@randlabs/myalgo-connect';
-const myAlgoWallet = new MyAlgoConnect();
+import MyAlgoConnect from '@randlabs/myalgo-connect'
+import {getAlgod} from '../access.mjs'
+import algosdk from 'algosdk'
+
+const myAlgoWallet = new MyAlgoConnect()
 
 const print = console.log, error = console.error
 
@@ -9,20 +12,27 @@ const qe = s => qa(s)[0]
 
 let address, addresses
 
-address = 'KNEQRACEJA4MO4J6HXJWNZE3PZZW7ICZAQPJ7TC4QCG6Z5F3ZJIGJX6KZE'
+address = localStorage.getItem('swapaddr')
+
 
 const showAddress = addr => qe('#addr').innerHTML = addr
 
 const connect_ = async () => {
   address = (await myAlgoWallet.connect()).map(a => a.address)[0]  
-  showAddress(address)
+  if (address) {
+    showAddress(address)
+    localStorage.setItem('swapaddr', address)
+  }
 }
 
 const connect = () => connect_().catch(error)
 
-const fetch2 = async url => await (await fetch(url))
+const fetchjson = async url => await (await fetch(url)).json()
+
+const fetchbody = async url => await (await fetch(url)).body()
 
 const make = async () => {
+  console.log("make")
   let redeem = qe('#redeem').value
   let asset1 = qe('#asset1').value
   let asset2 = qe('#asset2').value
@@ -33,14 +43,20 @@ const make = async () => {
   if (asset2) assets.push(asset2 * 1)
   if (asset3) assets.push(asset3 * 1)
   assets = assets.join(',')
-  let data = await fetch2(`/make?addr=${addr}&redeemAsset=${redeem}&assets=${assets}`)
-  console.log(data)
-  const signedTxn = await myAlgoWallet.signTransaction(txn.toByte())
+  console.log({addr,redeem,assets})
+  let txn = await fetchjson(`/make?addr=${addr}&redeemAsset=${redeem}&assets=${assets}`)
+  console.log(txn)
+  print('create Transaction object')
+  //txn = new algosdk.Transaction(txn)
+  let algod = getAlgod('MAINNEt')
+  const signedTxn = await myAlgoWallet.signTransaction(txn)
   const response = await algod.sendRawTransaction(signedTxn.blob).do()  
+  console.log(response)
+  return false
 }
 
 
-Object.assign(window, {qa, qe, myAlgoWallet, make,
+Object.assign(window, {qa, qe, myAlgoWallet, make, fetchjson, fetchbody,
                        connect, connect_, showAddress})
 
 showAddress(address)

@@ -1,6 +1,10 @@
 import express from 'express'
 import compression from 'compression'
 import serveIndex from 'serve-index'
+import {getAlgod} from './access.mjs'
+import {makeSwapApp} from './makeswap.mjs'
+
+const print = console.log
 
 const app = express()
 
