@@ -105,6 +105,11 @@ const loadInputs = () => {
   if (window.appAddress) {
     qe('#appaddress').innerHTML = window.appAddress
     qe('#showinfo').style.display = 'block'
+
+    qe('#embed').value = `
+     <iframe class="embedswap" src="https://swap.algonfts.art/swap.html?label=Swap!&appAddress=${appAddress}&appIndex=${appIndex}&redeemAsset=${redeemAsset}&asset1=${asset1}&asset2=${asset2}&asset3=${asset3}">
+     </iframe>
+    `
   }
 }
 
