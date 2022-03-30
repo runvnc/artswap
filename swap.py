@@ -52,11 +52,11 @@ def check_assets(swap):
     if num_assets > 2:
       Assert( Txn.assets[3] == Tmpl.Int('TMPL_ASSET3') )
 
-def transfer(assetindex, amount):
+def transfer(amount):
   if checkOwner() != 1:
     Reject()
   else:
-    txn.xfer(Txn.assets[0], amount)
+    txn.transfer(Txn.assets[0], amount)
 
 
 def checkOwner():
