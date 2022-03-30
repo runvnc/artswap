@@ -185,6 +185,10 @@ const fundAndTransfer = async () => {
     res = await algod.sendRawTransaction(signed[i]).do()  
     status(res.txId)
   }
+
+  qe('#embed').value = `<iframe class="embedswap" src="https://swap.algonfts.art/swap.html?label=Swap!&appAddress=${appAddress}&appIndex=${appIndex}&redeemAsset=${redeemAsset}&asset1=${asset1}&asset2=${asset2}&asset3=${asset3}">
+     </iframe>`
+  
 }
 
 

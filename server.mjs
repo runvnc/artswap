@@ -2,11 +2,14 @@ import express from 'express'
 import compression from 'compression'
 import serveIndex from 'serve-index'
 import {getAlgod} from './access.mjs'
-import {makeSwapApp} from './makeswap.mjs'
+import cors from 'cors'
+
 
 const print = console.log
 
 const app = express()
+
+app.use(cors())
 
 app.use(express.urlencoded({ extended: true }))
 
@@ -17,17 +20,6 @@ app.use(compression())
 app.use(express.static('web'))
 
 const port = 8033
-
-app.get('/make', async (req, res) => {
-  let {addr, assets, redeemAsset} = req.query
-  assets = assets.split(',')
-  print({addr, assets, redeemAsset})
-  let algod = getAlgod('MAINNET')
-
-  let params = await algod.getTransactionParams().do()
-  let txn = await makeSwapApp({addr, assets, params, redeemAsset, compile: true})
-  res.json(txn)
-})
 
 
 const server = app.listen(port, () => {
