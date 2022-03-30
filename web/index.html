@@ -139,6 +139,11 @@ input {
   padding-left: 5px;  
 }
 
+#status {
+  background: #002200;
+  color: light-green;
+  border: 1px solid #fff;
+}
 
 </style>
 </head>
@@ -171,6 +176,13 @@ Assets to Trade in:<br><br>
 
 <p><button onclick="return make()">Make Swap App</button>
 </p>
+
+<div id="status">
+</div>
+
+<button onclick="closeApp(appId)"></button>
+
+<button onclick="delApp(appId)"></button>
 
 <div id="showinfo" style="display:none;">
 

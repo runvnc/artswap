@@ -15,6 +15,8 @@ const doc = window.document
 const qa = s => doc.querySelectorAll(s)
 const qe = s => qa(s)[0]
 
+window.appId = -1
+
 let address, addresses
 
 address = localStorage.getItem('swapaddr')
@@ -120,13 +122,12 @@ const waitForTxnInfo = async (txid) => {
 const closeApp = async (appIndex) => {
   const params = await algod.getTransactionParams().do()
 
-  const txn : any = {
+  const txn = {
     ...params,
     type: "appl",
     appOnComplete: 2,
     from: address,
-    appIndex,
-    note: note,
+    appIndex
   }
 
   const myAlgoConnect = new MyAlgoConnect()
@@ -136,7 +137,7 @@ const closeApp = async (appIndex) => {
 const delApp = async (appIndex) => {
   const params = await algod.getTransactionParams().do()
 
-  const txn : any = {
+  const txn = {
     ...params,
     type: "appl",
     appOnComplete: 5,
@@ -148,12 +149,16 @@ const delApp = async (appIndex) => {
   const signedTxn = await myAlgoConnect.signTransaction(txn)  	
 }
 
-const closeDel = async (appIndex) {
+const status = (s) => {
+  qe('#status').innerHTML = s	
+}
+
+const closeDel = async (appIndex) => {
   await closeApp(appIndex)
-  print('closed ok')
+  status('Closeout OK')
   localStorage.setItem('swap_app_status', 'closed')
   await delApp(appIndex)
-  print('del ok')
+  status('App Deleted')
   localStorage.setItem('swap_app_status', 'deleted')
 }
 
