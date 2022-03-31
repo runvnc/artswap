@@ -22,6 +22,7 @@ byte "transfer"
 ==
 bz main_l8
 txna ApplicationArgs 1
+btoi
 callsub transfer_6
 int 1
 return
@@ -274,6 +275,8 @@ retsub
 // transfer
 transfer_6:
 store 10
+byte "Checking owner"
+log
 callsub checkOwner_7
 int 1
 !=
@@ -290,8 +293,8 @@ itxn_field AssetAmount
 itxn_submit
 b transfer_6_l3
 transfer_6_l2:
-int 0
-return
+byte "sender is not owner"
+log
 transfer_6_l3:
 retsub
 
