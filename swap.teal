@@ -5,6 +5,10 @@ txn NumAppArgs
 int 0
 ==
 bnz main_l7
+txna ApplicationArgs 0
+byte "transfer"
+==
+bnz main_l6
 byte "arg found is: "
 txna ApplicationArgs 0
 concat
@@ -12,21 +16,11 @@ log
 txna ApplicationArgs 0
 byte "opt_in"
 ==
-bnz main_l6
+bnz main_l5
 txna ApplicationArgs 0
 byte "swap"
 ==
-bnz main_l5
-txna ApplicationArgs 0
-byte "transfer"
-==
 bz main_l8
-txna ApplicationArgs 1
-btoi
-callsub transfer_6
-int 1
-return
-main_l5:
 int 1
 callsub checkassets_5
 callsub checktransfers_2
@@ -35,10 +29,16 @@ load 0
 callsub completeswap_3
 int 1
 return
-main_l6:
+main_l5:
 int 0
 callsub checkassets_5
 callsub optins_4
+int 1
+return
+main_l6:
+txna ApplicationArgs 1
+btoi
+callsub transfer_6
 int 1
 return
 main_l7:
@@ -47,7 +47,7 @@ return
 main_l8:
 byte "Did not match method."
 log
-int 0
+int 10
 return
 
 // get_asset
@@ -281,6 +281,8 @@ callsub checkOwner_7
 int 1
 !=
 bnz transfer_6_l2
+byte "Would try to transfer"
+log
 itxn_begin
 int axfer
 itxn_field TypeEnum
@@ -295,6 +297,8 @@ b transfer_6_l3
 transfer_6_l2:
 byte "sender is not owner"
 log
+int 0
+return
 transfer_6_l3:
 retsub
 

@@ -187,31 +187,27 @@ const fundAndTransfer = async () => {
   }
 
   qe('#embed').value = `<iframe class="embedswap" src="https://swap.algonfts.art/swap.html?label=Swap!&appAddress=${appAddress}&appIndex=${appIndex}&redeemAsset=${redeemAsset}&asset1=${asset1}&asset2=${asset2}&asset3=${asset3}">
-     </iframe>`
-  
+     </iframe>`  
 }
 
 const transfer = async () => {
   let appIndex = window.appIndex
-  let assetid = qe('#xferasset').value
+  let assetid = qe('#xferasset').value * 1
   let amount = qe('#xferamt').value * 1
   let address = qe('#addr').innerHTML
   
   const params = await algod.getTransactionParams().do()
-  console.log({amount})
-  amount =  algosdk.encodeUint64(amount)
-  const txn = {
-    ...params,
-    type: "appl",
-    appOnComplete: 0,
-    from: address,
-    foreignAssets: [assetid],
-    appArgs: ["transfer", amount],
-    appIndex
-  }
+
+  let callTransfer = new Buffer("transfer")
+  callTransfer = new Uint8Array(callTransfer)
+  let argamount = algosdk.encodeUint64(amount)
+  
+  let foreignAssets = [assetid]
+  let call = await algosdk.makeApplicationCallTxnFromObject({from: address, foreignAssets, appArgs: [callTransfer, argamount], appIndex, 
+     onComplete: algosdk.OnApplicationComplete.NoOpOC, suggestedParams: params })
 
   const myAlgoConnect = new MyAlgoConnect()
-  const signedTxn = await myAlgoConnect.signTransaction(txn)  	
+  const signedTxn = await myAlgoConnect.signTransaction(call.toByte())  	
   const response = await algod.sendRawTransaction(signedTxn.blob).do()  
   console.log(response)
   status(JSON.stringify(response) + '<br>Transfer success')  

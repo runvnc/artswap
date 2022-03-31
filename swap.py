@@ -56,8 +56,9 @@ def transfer(amount):
   print("Checking owner")
   if checkOwner() != 1:
     print("sender is not owner")
-    #Reject()
+    Reject()    
   else:
+    print("Would try to transfer")    
     txn.transfer(Txn.assets[0], amount)
 
 
@@ -72,6 +73,10 @@ def app():
   if Txn.application_args.length() == 0:
     return checkOwner()
 
+  if Txn.application_args[0] == 'transfer':
+      transfer(Btoi(Txn.application_args[1]))
+      return 1      
+
   print("arg found is: " + Txn.application_args[0])
       
   if Txn.application_args[0] == 'opt_in':
@@ -85,9 +90,5 @@ def app():
     complete_swap(n)
     return 1
 
-  if Txn.application_args[0] == 'transfer':
-    transfer(Btoi(Txn.application_args[1]))
-    return 1
-
   print("Did not match method.")
-  return 0
+  return 10
