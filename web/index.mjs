@@ -191,6 +191,31 @@ const fundAndTransfer = async () => {
   
 }
 
+const transfer = async () => {
+  let appIndex = window.appIndex
+  let assetid = qe('#xferasset').value
+  let amount = qe('#xferamt').value
+  let address = qe('#addr').innerHTML
+  
+  const params = await algod.getTransactionParams().do()
+  amount =  algosdk.encodeUint64(amount)
+  const txn = {
+    ...params,
+    type: "appl",
+    appOnComplete: 0,
+    from: address,
+    foreignAssets: [assetid],
+    appArgs: ["transfer", amount],
+    appIndex
+  }
+
+  const myAlgoConnect = new MyAlgoConnect()
+  const signedTxn = await myAlgoConnect.signTransaction(txn)  	
+  const response = await algod.sendRawTransaction(signedTxn.blob).do()  
+  console.log(response)
+  status(JSON.stringify(response) + '<br>Transfer success')  
+}
+
 
 const closeApp = async (appIndex) => {
   const params = await algod.getTransactionParams().do()
@@ -245,7 +270,7 @@ const closeDel = async (appIndex) => {
 
 Object.assign(window, {qa, qe, myAlgoWallet, make, fetchjson, fetchtext,
                        connect, connect_, showAddress, loadInputs, saveInputs,
-                       closeApp, delApp, fundAndTransfer})
+                       closeApp, delApp, fundAndTransfer, transfer})
 
 showAddress(address)
 
