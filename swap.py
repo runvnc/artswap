@@ -53,8 +53,10 @@ def check_assets(swap):
       Assert( Txn.assets[3] == Tmpl.Int('TMPL_ASSET3') )
 
 def transfer(amount):
+  print("Checking owner")
   if checkOwner() != 1:
-    Reject()
+    print("sender is not owner")
+    #Reject()
   else:
     txn.transfer(Txn.assets[0], amount)
 
@@ -84,7 +86,7 @@ def app():
     return 1
 
   if Txn.application_args[0] == 'transfer':
-    transfer(Txn.application_args[1])
+    transfer(Btoi(Txn.application_args[1]))
     return 1
 
   print("Did not match method.")

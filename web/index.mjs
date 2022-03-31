@@ -194,10 +194,11 @@ const fundAndTransfer = async () => {
 const transfer = async () => {
   let appIndex = window.appIndex
   let assetid = qe('#xferasset').value
-  let amount = qe('#xferamt').value
+  let amount = qe('#xferamt').value * 1
   let address = qe('#addr').innerHTML
   
   const params = await algod.getTransactionParams().do()
+  console.log({amount})
   amount =  algosdk.encodeUint64(amount)
   const txn = {
     ...params,
