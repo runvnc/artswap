@@ -81,7 +81,7 @@ const go = async () => {
     let res = await algod.sendRawTransaction(signed).do()
    
     console.log(res.txId)
-    qe('#txid').innerHTML = res.txId
+    qe('#txid').innerHTML = `<p>Transfer succeeded!</p>`
   } catch (e) {
   	qe('#txid').innerHTML = e.message
   }

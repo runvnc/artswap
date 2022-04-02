@@ -30,7 +30,7 @@ def check_transfers():
     i = i + 1
 
   Assert(found == num_assets)
-  return found
+  return amount
 
 def complete_swap(n):
   txn.transfer(Txn.assets[0], n)
@@ -71,6 +71,9 @@ def checkOwner():
 def app():
   n = 0  
   if Txn.application_args.length() == 0:
+    return checkOwner()
+
+  if Txn.on_completion != OnComplete.NoOp:
     return checkOwner()
 
   if Txn.application_args[0] == 'transfer':
