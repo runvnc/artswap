@@ -64,7 +64,7 @@ def complete_swap(n):
   current = Btoi(App.localGet(Txn.sender, 'count'))
   Assert( current < Tmpl.Int('TMPL_MAX') )
   txn.transfer(Txn.assets[0], n)
-  current = current + 1
+  current = current + n
   App.localPut(Txn.sender, 'count', current)
 
 def opt_ins():

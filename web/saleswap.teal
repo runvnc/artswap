@@ -282,7 +282,7 @@ load 12
 itxn_field AssetAmount
 itxn_submit
 load 13
-int 1
+load 12
 +
 store 13
 txn Sender
