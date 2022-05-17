@@ -47,8 +47,8 @@ const make = async () => {
   let addr = qe('#addr').innerHTML
   let price = qe('#price').value
   let max = qe('#max').value
-  
-  let assets = [asset1*1]
+
+  if (asset1) assets.push(asset1*1)  
   if (asset2) assets.push(asset2 * 1)
   if (asset3) assets.push(asset3 * 1)
 
@@ -162,7 +162,8 @@ const fundAndTransfer = async () => {
   let asset3 = qe('#asset3').value
   let addr = qe('#addr').innerHTML
   
-  let assets = [asset1*1]
+  let assets = []
+  if (asset1) assets.push(asset1 * 1)
   if (asset2) assets.push(asset2 * 1)
   if (asset3) assets.push(asset3 * 1)
 

@@ -55,6 +55,8 @@ export async function fundCallTransferTxns({addr, appIndex, appAddress, redeemAs
   let callOptIn = new Buffer("opt_in")
   callOptIn = new Uint8Array(callOptIn)
   let foreignAssets = [redeemAsset]
+  console.log({assets})
+  return
   for (let a of assets) foreignAssets.push(a)
   let call = await algosdk.makeApplicationCallTxnFromObject({from: addr, foreignAssets, appArgs: [callOptIn], appIndex, onComplete: algosdk.OnApplicationComplete.NoOpOC, suggestedParams: params })
   let xferasset = await algosdk.makeAssetTransferTxnWithSuggestedParams(
