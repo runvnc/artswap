@@ -57,6 +57,8 @@ let successMessage = () => {
 const go = async () => {  
   let algod = getAlgod('MAIN')
 
+  successMessage()
+  
   if (!customer) return (await connect())
 
   let appAddress = urlParams.get('appAddress')
@@ -66,6 +68,8 @@ const go = async () => {
   
   let asset2 = urlParams.get('asset2')
   let asset3 = urlParams.get('asset3')
+
+  
   
   let assets = [asset1 * 1]
   if (asset2) assets.push(asset2*1)
@@ -88,16 +92,6 @@ const go = async () => {
     successMessage()
   } catch (e) {
   	qe('#txid').innerHTML = e.message
-  }
-}
-
-window.showChar = (e) => {
-  console.log('press')
-  console.log(e, e.key)  
-  if (e.key == '%' && e.ctrlKey && e.shiftKey) {
-  	successMessage()
-  	
-  	ev.preventDefault()
   }
 }
 

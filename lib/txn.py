@@ -20,6 +20,16 @@ def opt_in(assetid, to=Global.current_application_address()):
     	InnerTxnBuilder.SetField(TxnField.sender, to),
     	InnerTxnBuilder.SetField(TxnField.asset_amount, Int(0)),
     	InnerTxnBuilder.Submit() )
+def pay(from_, to, amount):
+  return InnerTxnBuilder.SetFields({
+        TxnField.type_enum: TxnType.Payment,
+        TxnField.receiver: to,
+        TxnField.amount: amount,
+        TxnField.sender: from_
+      })
+
+
+
 
 if __name__ == "__main__":
     print(compileTeal(app(), mode=Mode.Application, version=6))
