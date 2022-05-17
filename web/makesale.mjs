@@ -10,6 +10,7 @@ export async function makeSwapApp({addr, assets, redeemAsset, price, max, params
   let teal = await fetchtext('saleswap.teal')
   let inserts = { TMPL_NUM_ASSETS: assets.length,
                   TMPL_OWNER: addr,
+                  TMPL_MAX: 99999999,
                   TMPL_REDEEM_ASSET: redeemAsset}
   for (let n = 1; n <= 3; n++) {
     if (n <= assets.length)
@@ -18,10 +19,10 @@ export async function makeSwapApp({addr, assets, redeemAsset, price, max, params
       inserts[`TMPL_ASSET${n}`] = 0
   }
   if (price && price > 0) {
-    inserts['TMPL_PRICE'] = price
+    inserts['TMPL_PRICE'] = price * 1000000
   }
   if (max && max > 0) {
-    inserts('TMPL_MAX'] = max
+    inserts['TMPL_MAX'] = max
   }
   for (let key in inserts) {
     teal = teal.replaceAll(key, inserts[key])

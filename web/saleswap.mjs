@@ -25,7 +25,7 @@ const showAddress = (a) => {
 const loadAccount = () => {
   let addr = localStorage.getItem('swap_customer')
   if (addr) {
-  	customer = addr
+    customer = addr
     qe('#btngo').style.display = 'inline-block'
     showAddress(customer)
     return customer
@@ -49,11 +49,18 @@ const urlParams = new URLSearchParams(window.location.search)
 let btntext = urlParams.get('label')
 qe('#btngo').innerHTML = btntext
 
+if (urlParams.get('max')) {
+  qe('#maxinfo').innerHTML = 'Max per customer: ' + urlParams.get('max')
+}
+
+if (urlParams.get('price')) {
+  qe('#priceinfo').innerHTML = urlParams.get('price') + 'ALGO / item'
+}
+
 let successMessage = () => {
   window.parent.postMessage("transfer_success","*")
 }
-
-  
+ 
 const go = async () => {  
   let algod = getAlgod('MAIN')
 
@@ -62,20 +69,25 @@ const go = async () => {
   let appAddress = urlParams.get('appAddress')
   let redeemAsset = urlParams.get('redeemAsset')*1
   let appIndex = urlParams.get('appIndex')*1
+  let price = 0
+  if (urlParams.get('price')) price = urlParams.get('price')*1
+  
+  if (urlParams.get('max')) max = urlParams.get('max')*1
+
   let asset1 = urlParams.get('asset1')
   
   let asset2 = urlParams.get('asset2')
   let asset3 = urlParams.get('asset3')
-  
-  let assets = [asset1 * 1]
+  let assets = []
+  if (asset1) assets.push(asset1*1)
   if (asset2) assets.push(asset2*1)
   if (asset3) assets.push(asset3*1)
 
   let amount = qe('#amount').value * 1
   let params = await algod.getTransactionParams().do()
   
-  let txns = await createSwapTxns({params, redeemAsset, customer, appAddress, appIndex, assets, amount})  
-  
+  let txns = await createSwapTxns({params, redeemAsset, customer, appAddress, 
+                                   appIndex, assets, price, amount})
   print(txns)
   txns = txns.map( t => t.toByte())
   let signed = await myAlgoWallet.signTransaction(txns)
