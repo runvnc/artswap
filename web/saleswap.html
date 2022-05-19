@@ -46,6 +46,11 @@ html {
 body {
 	width: 100%;
 }
+
+#priceinfo {
+  display: inline;
+}
+
 </style>
 </head>
 <body onkeydown="showChar(event)">
@@ -54,10 +59,11 @@ body {
 <br>
 <button id="btnconn" onclick="connect().catch(console.error)">Wallet</button>
 
-<span id="priceinfo"></span>  <span id="maxinfo"></span>
+<!-- <div id="assetID"></div>
+ <div id="maxinfo"></div> -->
 
 <input type="number" placeholder="Amount" id="amount" min="1" max="1000">
-
+<div id="priceinfo"></div> 
 <button id="btngo"  onclick="go().catch(console.error)">Swap</button>
 
 <div id="txid"></div>

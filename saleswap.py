@@ -44,9 +44,10 @@ def check_payment():
   i = 0
   found = 0
   multiple = 0
+  Assert( Txn.accounts[1] == Tmpl.Addr("TMPL_OWNER") )
   while i < Global.group_size and found != 1:
     if ( (Gtxn[i].amount % PRICE == 0) and 
-        Gtxn[i].receiver == OWNER): 
+        Gtxn[i].receiver == Txn.accounts[1]): 
       found = 1
       multiple = Gtxn[i].amount / PRICE
     i = i + 1
@@ -56,20 +57,19 @@ def check_payment():
 
 
 def pay_fee():
-  Assert( Txn.accounts[1] == PAY_FEE_TO )
-  txn.pay(app_address, Txn.accounts[1], PRICE / Int(FEE_RATIO_DENOMINATOR) )
+  Assert( Txn.accounts[2] == PAY_FEE_TO )
+  txn.pay(app_address, Txn.accounts[2], PRICE / Int(FEE_RATIO_DENOMINATOR) )
 
 def complete_swap(n):
-  current = 0
-  current = Btoi(App.localGet(Txn.sender, 'count'))
-  Assert( current < Tmpl.Int('TMPL_MAX') )
+  bal = AssetHolding.balance(0,0)
+  bal
+  Assert( bal.value() + n <= Tmpl.Int('TMPL_MAX') )
   txn.transfer(Txn.assets[0], n)
-  current = current + n
-  App.localPut(Txn.sender, 'count', current)
 
 def opt_ins():
   txn.opt_in(Txn.assets[0])
-  txn.opt_in(Txn.assets[1])
+  if num_assets > 0:
+    txn.opt_in(Txn.assets[1])
   if num_assets > 1:
     txn.opt_in(Txn.assets[2])
   if num_assets > 2:
@@ -78,7 +78,8 @@ def opt_ins():
 def check_assets(swap):
   Assert( Txn.assets[0] == Tmpl.Int('TMPL_REDEEM_ASSET') )
   if swap == 0:
-    Assert( Txn.assets[1] == Tmpl.Int('TMPL_ASSET1') )
+    if num_assets > 0:
+      Assert( Txn.assets[1] == Tmpl.Int('TMPL_ASSET1') )
     if num_assets > 1:
       Assert( Txn.assets[2] == Tmpl.Int('TMPL_ASSET2') ) 
     if num_assets > 2:

@@ -1,4 +1,4 @@
-import {createSwapTxns} from './dotxns.mjs'
+import {createSaleSwapTxns} from './dotxns_sale.mjs'
 import {getAlgod, getIndexer} from './access.mjs'
 import algosdk from 'algosdk'
 
@@ -49,12 +49,14 @@ const urlParams = new URLSearchParams(window.location.search)
 let btntext = urlParams.get('label')
 qe('#btngo').innerHTML = btntext
 
-if (urlParams.get('max')) {
-  qe('#maxinfo').innerHTML = 'Max per customer: ' + urlParams.get('max')
-}
+//qe('#assetID').innerHTML = urlParams.get('redeemAsset')
+
+//if (urlParams.get('max')) {
+//  qe('#maxinfo').innerHTML = 'Max per customer: ' + urlParams.get('max')
+//}
 
 if (urlParams.get('price')) {
-  qe('#priceinfo').innerHTML = urlParams.get('price') + 'ALGO / item'
+  qe('#priceinfo').innerHTML = urlParams.get('price') + ' <img src="algo.svg" height="15" id="algoicon">'
 }
 
 let successMessage = () => {
@@ -72,7 +74,7 @@ const go = async () => {
   let price = 0
   if (urlParams.get('price')) price = urlParams.get('price')*1
   
-  if (urlParams.get('max')) max = urlParams.get('max')*1
+  //if (urlParams.get('max')) max = urlParams.get('max')*1
 
   let asset1 = urlParams.get('asset1')
   
@@ -83,11 +85,13 @@ const go = async () => {
   if (asset2) assets.push(asset2*1)
   if (asset3) assets.push(asset3*1)
 
+  let owner = urlParams.get('owner')
+
   let amount = qe('#amount').value * 1
   let params = await algod.getTransactionParams().do()
   
-  let txns = await createSwapTxns({params, redeemAsset, customer, appAddress, 
-                                   appIndex, assets, price, amount})
+  let txns = await createSaleSwapTxns({params, redeemAsset, customer, appAddress, 
+                                   appIndex, assets, price, amount, payTo: owner })
   print(txns)
   txns = txns.map( t => t.toByte())
   let signed = await myAlgoWallet.signTransaction(txns)

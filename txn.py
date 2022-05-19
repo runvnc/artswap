@@ -20,11 +20,14 @@ def opt_in(assetid, to=app_address):
 
 @inline
 def pay(from_, to, amount):
+  Begin()
   SetFields({
     TxnField.type_enum: TxnType.Payment,
     TxnField.receiver: to,
     TxnField.amount: amount,
     TxnField.sender: from_
   })
+  Submit()
+
 
 

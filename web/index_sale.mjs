@@ -47,6 +47,7 @@ const make = async () => {
   let addr = qe('#addr').innerHTML
   let price = qe('#price').value
   let max = qe('#max').value
+  let assets = []
 
   if (asset1) assets.push(asset1*1)  
   if (asset2) assets.push(asset2 * 1)
@@ -108,14 +109,16 @@ const loadInputs = () => {
   if (asset3) qe('#asset3').value = asset3
   if (max) qe('#max').value = max
   if (price && price>0) qe('#price').value = price
+ 
   window.appAddress = localStorage.getItem('swap_app_address')
   window.appIndex = localStorage.getItem('swap_app_index') * 1
   status(window.appIndex)
   if (window.appAddress) {
     qe('#appaddress').innerHTML = window.appAddress
     qe('#showinfo').style.display = 'block'
-
-    qe('#embed').value = `<iframe class="embedswap" src="https://swap.algonfts.art/swap.html?label=Swap!&appAddress=${appAddress}&appIndex=${appIndex}&redeemAsset=${redeemAsset}&asset1=${asset1}&asset2=${asset2}&asset3=${asset3}">
+    let lbl = 'Swap'
+    if (price > 0) lbl = 'Buy'
+    qe('#embed').value = `<iframe class="embedsaleswap" src="https://swap.algonfts.art/saleswap.html?label=${lbl}&appAddress=${appAddress}&appIndex=${appIndex}&redeemAsset=${redeemAsset}&asset1=${asset1}&asset2=${asset2}&asset3=${asset3}&price=${price}&max=${max}&owner=${addr}">
      </iframe>`
   }
 }
@@ -155,48 +158,64 @@ const waitForTxnInfo = async (txid) => {
 }
 
 const fundAndTransfer = async () => {
-  const params = await algod.getTransactionParams().do()
-  let redeemAsset = qe('#redeem').value * 1
-  let asset1 = qe('#asset1').value
-  let asset2 = qe('#asset2').value
-  let asset3 = qe('#asset3').value
-  let addr = qe('#addr').innerHTML
+  try {
+    const params = await algod.getTransactionParams().do()
+    let redeemAsset = qe('#redeem').value * 1
+    let asset1 = qe('#asset1').value
+    let asset2 = qe('#asset2').value
+    let asset3 = qe('#asset3').value
+    let addr = qe('#addr').innerHTML
+    let price = qe('#price').value
+    let max = qe('#max').value
+    if (!price) price = 0
+    if (!max) max = 99999999
   
-  let assets = []
-  if (asset1) assets.push(asset1 * 1)
-  if (asset2) assets.push(asset2 * 1)
-  if (asset3) assets.push(asset3 * 1)
+    let assets = []
+    if (asset1) assets.push(asset1 * 1)
+    if (asset2) assets.push(asset2 * 1)
+    if (asset3) assets.push(asset3 * 1)
+    assets = assets.filter( id => id != 0 )
 
-  let fund = 1000000
-  let amount = qe('#amount').value * 1
-  if (amount < 1 || isNaN(amount)) {
-  	status('Specify amount of redeemable to transfer.')
-  	return
-  }
-  let appIndex = window.appIndex
-  let txns = await fundCallTransferTxns({addr, appIndex, appAddress, redeemAsset,
-                                         assets, amount, fund, params})
-  
-  print(JSON.stringify(txns,null,4))
-  let txs = txns.map( t => t.toByte() )
-  let signed = await myAlgoWallet.signTransaction(txs)
-  signed = signed.map (s => s.blob)    
-  console.log(signed)
-  status("Sending fund..")
-  let res = await algod.sendRawTransaction(signed[0]).do()  
-  console.log(res)
-  status(res.txId)
-  status("Sending call..")
-  res = await algod.sendRawTransaction(signed[1]).do()  
-  status(res.txId)
-  for (let i = 2; i < signed.length; i++) {
-    print("Sending transfer..")  
-    res = await algod.sendRawTransaction(signed[i]).do()  
+    let fund = 1000000
+    let amount = qe('#amount').value * 1
+    if (amount < 1 || isNaN(amount)) {
+      status('Specify amount of redeemable to transfer.')
+      return
+    }
+    let appIndex = window.appIndex
+    let txns = await fundCallTransferTxns({addr, appIndex, appAddress, redeemAsset,
+                                           assets, amount, fund, params})
+    
+    print(JSON.stringify(txns,null,4))
+    let txs = txns.map( t => t.toByte() )
+    let signed = await myAlgoWallet.signTransaction(txs)
+    signed = signed.map (s => s.blob)    
+    console.log(signed)
+    status("Sending fund..")
+    let res = await algod.sendRawTransaction(signed[0]).do()  
+    console.log(res)
     status(res.txId)
-  }
+    status("Sending call..")
+    res = await algod.sendRawTransaction(signed[1]).do()  
+    status(res.txId)
+    for (let i = 2; i < signed.length; i++) {
+      print("Sending transfer..")  
+      res = await algod.sendRawTransaction(signed[i]).do()  
+      status(res.txId)
+      status('Success.')
+    }
+    let lbl = 'Swap'
+    if (price > 0) lbl = 'Buy'
+ 
+    qe('#embed').value =
+    `<iframe class="embedsaleswap" src="https://swap.algonfts.art/saleswap.html?label=${lbl}&appAddress=${appAddress}&appIndex=${appIndex}&redeemAsset=${redeemAsset}&asset1=${asset1}&asset2=${asset2}&asset3=${asset3}&price=${price}&max=${max}&owner=${addr}">
+     </iframe>`
 
-  qe('#embed').value = `<iframe class="embedswap" src="https://swap.algonfts.art/swap.html?label=Swap!&appAddress=${appAddress}&appIndex=${appIndex}&redeemAsset=${redeemAsset}&asset1=${asset1}&asset2=${asset2}&asset3=${asset3}">
-     </iframe>`  
+  } catch (e) {
+    console.error(e)
+    status(e.message)
+
+  }
 }
 
 const transfer = async () => {
@@ -261,7 +280,8 @@ const delApp = async (appIndex) => {
 }
 
 const status = (s) => {
-  qe('#status').innerHTML = s	
+  qe('#status').innerHTML += s	+ '</br>'
+  qe('#status').scrollTop = qe('#status').scrollHeight
 }
 
 const closeDel = async (appIndex) => {
